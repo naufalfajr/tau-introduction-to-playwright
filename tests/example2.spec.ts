@@ -1,46 +1,47 @@
-import { test, type Page } from '@playwright/test';
-import { HomePage } from '../pages/home-page';
-import { TopMenuPage } from '../pages/top-menu-page';
+import { test, expect } from "@playwright/test";
+import HomePage from "../pages/home-page";
+import TopMenuPage from "../pages/top-menu-page";
 
 const URL = 'https://playwright.dev/';
 let homePage: HomePage;
 let topMenuPage: TopMenuPage;
-const pageUrl = /.*intro/;
+let pageUrl = /.*intro/;
+let pageUrlJava = /.*java/;
 
-test.beforeEach(async ({page}) => {
-    await page.goto(URL);
-    homePage = new HomePage(page);
-});
+test.beforeEach(async ({ page }) => {
+	await page.goto(URL);
+	homePage = new HomePage(page);
+	topMenuPage = new TopMenuPage(page);
+})
 
-async function clickGetStarted(page: Page) {
-    await homePage.clickGetStarted();
-    topMenuPage = new TopMenuPage(page);
+async function clickGetStarted() {
+	homePage.clickGetStartedLink();
 }
 
-test.describe('Playwright website', () => {
+test.describe('Playwright Website Tests', () => {
+	test('has title', async () => {
+		await homePage.verifyTitle("Playwright");
+	});
 
-    test('has title', async () => {
-        await homePage.assertPageTitle();
-    });
-    
-    test('get started link', async ({ page }) => {
-        // Act
-        await clickGetStarted(page);
-        // Assert
-        await topMenuPage.assertPageUrl(pageUrl);
-    });
-    
-    test('check Java page', async ({ page }) => {
-        await test.step('Act', async () => {
-            await clickGetStarted(page);
-            await topMenuPage.hoverNode();
-            await topMenuPage.clickJava();
-        });
-      
-        await test.step('Assert', async () => {
-            await topMenuPage.assertPageUrl(pageUrl);
-            await topMenuPage.assertNodeDescriptionNotVisible();
-            await topMenuPage.assertJavaDescriptionVisible();
-        });
-    });
+	test('get started link', async ({ page }) => {
+		await clickGetStarted();
+		await topMenuPage.assertPageUrl(pageUrl);
+
+		await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
+	});
+
+	test('check Java Page', async ({ page }) => {
+		await test.step('Act', async () => {
+			await clickGetStarted();
+
+			await topMenuPage.hoverNode();
+      await topMenuPage.clickJava();
+		});
+
+		await test.step('Assert', async () => {
+			await topMenuPage.assertPageUrl(pageUrlJava);
+			await topMenuPage.assertNodeDescriptionNotVisible();
+			await topMenuPage.assertJavaDescriptionVisible();
+		});
+	});
 });
