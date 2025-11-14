@@ -12,7 +12,7 @@ import {
   Target
 } from '@applitools/eyes-playwright';
 
-export const USE_ULTRAFAST_GRID: boolean = true;
+export const USE_ULTRAFAST_GRID: boolean = false;
 // export const USE_ULTRAFAST_GRID: boolean = false;
 
 export let Batch: BatchInfo;
@@ -21,6 +21,7 @@ export let Runner: EyesRunner;
 let eyes: Eyes;
 let URL = 'https://demo.applitools.com';
 // let URL = 'https://demo.applitools.com/index_v2.html';
+const password = process.env.PASSWORD ?? 'happyTesting';
 
 test.beforeAll(async() => {
 
@@ -70,7 +71,7 @@ test.describe('ACME Bank', () => {
     await page.goto(URL);
     await eyes.check('Login page', Target.window().fully());
     await page.locator('id=username').fill('jedi');
-    await page.locator('id=password').fill('happyTesting');
+    await page.locator('id=password').fill(password);
     await page.locator('id=log-in').click();
     await eyes.check('Main page', Target.window().fully().layout());
   });

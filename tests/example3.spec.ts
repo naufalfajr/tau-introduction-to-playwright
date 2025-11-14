@@ -82,14 +82,14 @@ test.afterAll(async() => {
 });
 
 async function clickGetStarted(page: Page) {
-    await homePage.clickGetStarted();
+    await homePage.clickGetStartedLink();
     topMenuPage = new TopMenuPage(page);
 }
 
 test.describe('Playwright website', () => {
 
     test('has title', async () => {
-        await homePage.assertPageTitle();
+        await homePage.verifyTitle("Playwright");
         // https://applitools.com/docs/api-ref/sdk-api/playwright/js-intro/checksettings
         await eyes.check('Home page', Target.window().fully());
     });
